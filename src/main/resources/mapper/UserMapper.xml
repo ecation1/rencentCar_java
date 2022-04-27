@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.mapper.UserMapper">
+<!--    其他-->
+<!--    用户权限结果集-->
+    <resultMap id="user_permission" type="com.example.demo.pojo.User">
+        <id property="uid" column="uid"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="telNumber" column="telNumber"/>
+        <result property="address" column="address"/>
+        <result property="ID" column="ID"/>
+        <result property="name" column="name"/>
+        <result property="email" column="email"/>
+        <result property="createTime" column="createTime"/>
+        <result property="status" column="status"/>
+        <association property="roles" javaType="com.example.demo.pojo.Roles">
+            <id property="rid" column="rid"/>
+            <result property="role" column="role"/>
+        </association>
+    </resultMap>
+<!--    单用户相关-->
+    <!--    用户注册-->
+    <insert id="register" parameterType="com.example.demo.pojo.User">
+        insert into user(uid,username,password,createTime,address,name,ID,email) values (#{uid},#{username},#{password},#{createTime},#{address},#{name},#{ID},#{email})
+    </insert>
+
+    <!--    登录-->
+    <select id="login" parameterType="com.example.demo.pojo.User" resultType="User">
+        select * from user where username=#{username} and password=#{password}
+    </select>
+    <!--    用户更新-->
+    <update id="updateUser" parameterType="com.example.demo.pojo.User">
+        update user set telNumber=#{telNumber},email=#{email},status=#{status},address=#{address},ID=#{ID},name=#{name}
+         <if test="password!=null">
+             ,password=#{password}
+         </if> where username=#{username}
+    </update>
+    <!--    查询用户名是否存在-->
+    <select id="isHasUsername" parameterType="java.lang.String" resultType="com.example.demo.pojo.User">
+        select * from user where username=#{username}
+    </select>
+    <!--    删除用户-->
+    <delete id="deleteUser" parameterType="com.example.demo.pojo.User">
+        delete from user where uid=#{uid}
+    </delete>
+
+    <!--添加待审核商家-->
+    <insert id="addTobeShop" parameterType="com.example.demo.pojo.User">
+        insert into tobeShop(uid,username,password,email,address,name,ID) values (#{uid},#{username},#{password},#{email},#{address},#{name},#{ID})
+    </insert>
+
+    <!--查询待审核商家-->
+    <select id="getToBeShop" resultType="com.example.demo.pojo.User">
+        select * from tobeShop
+    </select>
+
+    <!--删除待审核商家-->
+    <delete id="deleteToBeShop" parameterType="com.example.demo.pojo.User">
+        delete from tobeShop where uid=#{uid}
+    </delete>
+<!--    单权限相关-->
+    <!-- 查询所有权限-->
+    <select id="selectAllPermission" resultType="com.example.demo.pojo.Permission">
+        select * from permission
+    </select>
+    <!--    新增权限-->
+        <insert id="AddPermission" parameterType="com.example.demo.pojo.Permission">
+            insert into permission values (#{pid},#{permissionName},#{permission})
+        </insert>
+
+<!--单角色相关-->
+    <!-- 查询所有角色-->
+    <select id="selectAllRoles" resultType="com.example.demo.pojo.Roles">
+        select *from roles
+    </select>
+    <!--新增角色-->
+    <insert id="addRole" parameterType="com.example.demo.pojo.Roles">
+        insert  into roles values (#{rid},#{role})
+    </insert>
+<!--    用户角色相关-->
+    <!--    用户赋予角色-->
+    <insert id="addRole_User" parameterType="com.example.demo.pojo.Role_User">
+        insert into roles_user values (#{ruid},#{uid},#{rid})
+    </insert>
+<!--    查询用户角色-->
+    <select id="selectRole" parameterType="java.lang.String" resultType="com.example.demo.pojo.Roles">
+        select roles.* from user,roles,roles_user where user.uid=roles_user.uid and roles_user.rid=roles.rid and
+        user.uid=#{uid}
+    </select>
+<!--    删除用户连接-->
+    <delete id="deleteUser_Roles" parameterType="java.lang.String">
+        delete from roles_user where uid=#{uid}
+    </delete>
+<!--    查询用户身份连接信息-->
+    <select id="selectRoleUser" parameterType="java.lang.String" resultType="com.example.demo.pojo.Role_User">
+        select * from roles_user where uid=#{uid}
+    </select>
+<!--    更新用户身份-->
+    <update id="updateRole_User" parameterType="com.example.demo.pojo.Role_User">
+        update roles_user set rid=#{rid} where uid=#{uid}
+    </update>
+<!--    用户权限相关-->
+    <!--    查询用户及其附属信息-->
+    <select id="selectAllUser" parameterType="java.util.Map" resultMap="user_permission">
+        select * from user,roles,roles_user
+        where user.uid=roles_user.uid and roles.rid=roles_user.rid
+        <if test="username!=null">
+            and user.username=#{username}
+        </if>
+        <if test="ID!=null">
+            and user.ID=#{ID}
+        </if>
+        <if test="uid!=null">
+            and user.uid=#{uid}
+        </if>
+    </select>
+
+    <select id="getUserInfo" resultMap="user_permission">
+        select * from user,roles,roles_user
+        where user.uid=roles_user.uid and roles.rid=roles_user.rid
+        and user.username=#{username}
+    </select>
+    <!--    查询用户权限-->
+    <select id="selectPermisson" parameterType="java.lang.String" resultType="com.example.demo.pojo.Permission">
+        SELECT permission.* from user,roles,roles_user,roles_permission,permission
+        where user.uid=roles_user.uid and roles_user.rid=roles.rid
+        and roles.rid=roles_permission.rid and roles_permission.pid=permission.pid
+        and user.uid=#{uid}
+    </select>
+<!--    驾照相关-->
+    <!--    添加驾照-->
+    <insert id="addLicense" parameterType="com.example.demo.pojo.License">
+        insert into license(lid,licenseId,licensePic,uid,status) values (#{lid},#{licenseId},#{licensePic},#{uid},#{status})
+    </insert>
+
+<!--    查询驾照信息-->
+    <select id="getLicense" parameterType="java.lang.String" resultType="com.example.demo.pojo.License">
+        select * from license where uid=#{uid}
+    </select>
+
+<!--    查询所有驾照-->
+    <select id="selectAllLicense" resultType="java.util.Map">
+        select license.*,user.username from user,license where user.uid=license.uid
+        and license.status=0
+    </select>
+
+    <update id="accessLicen" parameterType="java.lang.String">
+        update license set status = 1 where lid=#{lid};
+    </update>
+
+    <delete id="deleteLicen" parameterType="java.lang.String">
+        delete from license where lid=#{lid}
+    </delete>
+</mapper>

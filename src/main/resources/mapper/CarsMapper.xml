@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.mapper.CarsMapper">
+    <select id="selectCarByShop" parameterType="java.lang.String" resultType="java.util.Map">
+        SELECT cars.*,brand.brandName,carver.*
+        from cars,brand,carver,user,shop,car_shop
+        where cars.bid=brand.bid and cars.vid=carver.vid
+        and cars.cid=car_shop.cid and car_shop.sid=shop.sid
+        and shop.uid=user.uid and user.uid=#{uid}
+    </select>
+
+    <select id="selectToBeCar" resultType="java.util.Map">
+        SELECT cars.*,brand.brandName,carver.*,user.username
+        from cars,brand,carver,user,shop,car_shop
+        where cars.bid=brand.bid and cars.vid=carver.vid
+        and cars.cid=car_shop.cid and car_shop.sid=shop.sid
+        and shop.uid=user.uid and cars.status=0
+    </select>
+
+    <select id="getCarMenu" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT cars.*,brand.brandName,carver.verName,user.username,shop.lat,shop.lng,user.telNumber,user.email,shop.shopName,shop.address,shop.detail
+        from cars,brand,carver,user,shop,car_shop
+        where cars.bid=brand.bid and cars.vid=carver.vid
+        and cars.cid=car_shop.cid and car_shop.sid=shop.sid
+        and shop.uid=user.uid and cars.status=1
+        <if test="bid!=null">
+            and cars.bid=#{bid}
+        </if>
+        <if test="vid!=null">
+            and cars.vid=#{vid}
+        </if>
+        <if test="minPrice!=null">
+            and cars.price BETWEEN #{minPrice} and #{maxPrice}
+        </if>
+        <if test="cid!=null">
+            and cars.cid=#{cid}
+        </if>
+    </select>
+
+    <insert id="addToBeCar" parameterType="com.example.demo.pojo.Cars">
+        insert into cars(cid,carid,carPic,lisenPic,bid,vid,status,price,deposit,keepTime,aiTime,name) values (#{cid},#{carid},#{carPic},#{lisenPic},#{bid},#{vid},#{status},#{price},#{deposit},#{keepTime},#{aiTime},#{name})
+    </insert>
+
+    <insert id="addCar_Shop" parameterType="java.util.Map">
+        insert into car_shop(csid,cid,sid)values (#{csid},#{cid},#{sid})
+    </insert>
+
+    <update id="accessCar" parameterType="com.example.demo.pojo.Cars">
+        update cars set status=#{status} where cid=#{cid}
+    </update>
+
+    <update id="updateCar" parameterType="com.example.demo.pojo.Cars">
+        update cars set status=#{status}
+            <if test="carid!=null">
+                 , carid=#{carid}
+            </if>
+            <if test="carPic!=null">
+                 ,carPic=#{carPic}
+            </if>
+            <if test="lisenPic!=null">
+                 ,lisenPic=#{lisenPic}
+            </if>
+            <if test="bid!=null">
+                 ,bid=#{bid}
+            </if>
+            <if test="vid!=null">
+                 ,vid=#{vid}
+            </if>
+            <if test="keepTime!=null">
+                ,keepTime=#{keepTime}
+            </if>
+            <if test="aiTime!=null">
+                ,aiTime=#{aiTime}
+            </if>
+            <if test="name!=null">
+                ,name=#{name}
+            </if>
+             where cid=#{cid}
+    </update>
+
+    <delete id="deleteCar" parameterType="com.example.demo.pojo.Cars">
+        delete from cars where cid=#{cid}
+    </delete>
+
+    <delete id="deleteCar_Shop" parameterType="java.lang.String">
+        delete from car_shop where cid=#{cid}
+    </delete>
+</mapper>

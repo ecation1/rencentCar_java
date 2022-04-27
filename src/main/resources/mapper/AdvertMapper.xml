@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.mapper.AdvertMapper">
+    <select id="selectAdvert" resultType="com.example.demo.pojo.Advert">
+        select * from advert
+    </select>
+
+    <insert id="addAdvert" parameterType="com.example.demo.pojo.Advert">
+        insert into advert(aid,advertPic,url) values (#{aid},#{advertPic},#{url})
+    </insert>
+
+    <delete id="deleteAdvert" parameterType="java.lang.String">
+        delete from advert where aid=#{aid}
+    </delete>
+
+    <update id="updateAdvert" parameterType="com.example.demo.pojo.Advert">
+        update advert set advertPic=#{advertPic},url=#{url} where aid=#{aid}
+    </update>
+</mapper>

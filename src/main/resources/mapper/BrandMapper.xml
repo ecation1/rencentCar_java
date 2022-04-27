@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.mapper.BrandMapper">
+    <select id="selectBrand" resultType="com.example.demo.pojo.Brand">
+        select * from brand
+    </select>
+
+    <insert id="addBrand" parameterType="com.example.demo.pojo.Brand">
+        insert into brand values (#{bid},#{brandName})
+    </insert>
+
+    <delete id="deleteBrand" parameterType="java.lang.String">
+        delete from brand where bid=#{bid}
+    </delete>
+
+    <update id="updateBrand" parameterType="com.example.demo.pojo.Brand">
+        update brand set brandName=#{brandName} where bid=#{bid}
+    </update>
+
+    <select id="selectCarver" resultType="com.example.demo.pojo.Carver">
+        select * from carver
+    </select>
+</mapper>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.mapper.OrderMapper">
+    <select id="getMyOrder" resultType="java.util.Map">
+        select t_order.*,cars.carPic from user,t_order,cars
+        where user.uid=t_order.uid and cars.cid=t_order.cid
+        and t_order.status=#{status} and user.uid=#{uid}
+    </select>
+
+    <select id="getOrder" resultType="com.example.demo.pojo.Order">
+        select * from t_order where oid=#{oid}
+    </select>
+
+    <select id="getShopOrder" resultType="java.util.Map">
+        SELECT DISTINCT t_order.*,cars.carPic
+        from t_order,cars,user,shop,car_shop
+        where t_order.cid=cars.cid and cars.cid=car_shop.cid
+        and car_shop.sid=shop.sid and
+        shop.uid=#{uid}
+    </select>
+
+    <insert id="addOrder" parameterType="com.example.demo.pojo.Order">
+        INSERT into t_order(oid,orderStartTime,days,allPrice,status,cid,uid,`name`,ID,telNumber) values (#{oid},#{orderStartTime},#{days},#{allPrice},#{status},#{cid},#{uid},#{name},#{ID},#{telNumber})
+    </insert>
+
+    <update id="updateOrder" parameterType="com.example.demo.pojo.Order">
+        update t_order set status=#{status}
+        <if test="orderEndTime!=null">
+            , orderEndTime=#{orderEndTime}
+        </if>where oid=#{oid}
+    </update>
+
+    <delete id="deleteOrder" parameterType="com.example.demo.pojo.Order">
+        delete from t_order where oid=#{oid}
+    </delete>
+
+    <select id="selectOrder" resultType="com.example.demo.pojo.Order">
+        select * from t_order where uid=#{uid}
+    </select>
+</mapper>

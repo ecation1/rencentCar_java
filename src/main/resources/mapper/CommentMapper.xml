@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.mapper.CommentMapper">
+    <insert id="AddComment" parameterType="com.example.demo.pojo.Comment">
+        insert into t_comment(cmid,c_comment,uid,cid,stars,createTime) values (#{cmid},#{c_comment},#{uid},#{cid},#{stars},#{createTime})
+    </insert>
+
+    <select id="selectComment" parameterType="java.util.Map" resultType="java.util.Map">
+        select user.username,t_comment.* from user,t_comment
+        where user.uid=t_comment.uid and t_comment.cid=#{cid}
+    </select>
+</mapper>

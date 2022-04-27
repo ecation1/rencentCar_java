@@ -1,0 +1,37 @@
+#服务器配置
+server:
+  tomcat:
+    max-http-form-post-size: -1
+  port: 8081
+
+#mysql配置
+spring:
+  datasource:
+    username: root
+    password: yuheng200034
+    url: jdbc:mysql://localhost:3306/recentcar?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+#mybatis
+mybatis:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  mapper-locations: classpath:/mapper/*.xml
+  type-aliases-package: com.example.demo.pojo
+
+# sa-Token配置
+sa-token:
+  #token名称(cookie名称)
+  token-name: satoken
+  # 有效期
+  timeout: 604800
+  # 是否允许同一账号并发登录 (为true时允许一起登录, 为false时新登录挤掉旧登录)
+  is-concurrent: true
+  # 在多人登录同一账号时，是否共用一个token (为true时所有登录共用一个token, 为false时每次登录新建一个token)
+  is-share: false
+  # token风格
+  token-style: uuid
+  # token风格
+  is-log: true
+  is-read-cookie: false
+  is-read-head: true
